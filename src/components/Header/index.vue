@@ -56,9 +56,16 @@ export default {
     },
     methods:{
         toSearch(){
+            let location={
+              name:'search',
+              params:{keyword:this.keyword || undefined}
+          }
             // this.$router.push('/search/'+this.keyword+'?keyword1='+this.keyword.toUpperCase())
             // this.$router.push(`/search/${this.keyword}?keyword1=${this.keyword.toUpperCase()}`)
-          this.$router.push('/search')
+            if(this.$route.query){
+                location.query=this.$route.query
+            }
+          this.$router.push(location)
     }
 }
 }

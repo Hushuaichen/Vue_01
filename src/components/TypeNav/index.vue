@@ -128,7 +128,12 @@ export default {
 
                 }
                  location.query=query
+
+                 if(this.$route.params){
+                     location.params=this.$route.params
+                 }
                  this.$router.push(location)
+
             }
            
         },
@@ -141,7 +146,7 @@ export default {
     },
     },
     mounted(){
-        this.$store.dispatch('getCategoryList')
+        // this.$store.dispatch('getCategoryList')
         if(this.$route.path!=='/home')   {
             this.isShow=false
         } },
@@ -203,7 +208,7 @@ export default {
                     opacity: 1;
                 }
                 &.sort-enter-active {
-                    transition: all 1.5s;
+                    transition: all .5s;
                 }
 
                 .all-sort-list2 {

@@ -21,6 +21,9 @@ Vue.component('SlideLoop',SlideLoop)
 Vue.config.productionTip = false
 
 new Vue({
+  beforeCreate(){
+    Vue.prototype.$bus=this   //安装全局事件总线   任意组件内部都可以访问到(this.$bus)
+  },
   router,
   store,
   render: h => h(App),

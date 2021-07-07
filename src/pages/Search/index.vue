@@ -11,10 +11,9 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <li class="with-x" v-if="searchParams.categoryName">{{searchParams.categoryName}}<i @click="removecategoryName">×</i></li>
+            <li class="with-x" v-if="searchParams.keyword">{{searchParams.keyword}}<i @click="removeKeyword">×</i></li>
+
           </ul>
         </div>
 
@@ -56,7 +55,7 @@
                   </div>
                   <div class="price">
                     <strong>
-                      <em>¥</em>
+                      <em>¥ </em>
                       <i>{{goods.price}}</i>
                     </strong>
                   </div>
@@ -136,9 +135,19 @@ import { mapGetters} from 'vuex'
     },
     
     beforeMount(){
-        let {category1Id,category2Id,category3Id,categoryName}=this.$route.query
-        let {keyword}=this.$route.params
-        let searchParams={
+        this.handlerSeaechParams()
+    },
+    mounted(){
+        this.getSearchInfo()
+    },
+    methods:{
+      getSearchInfo(){
+        this.$store.dispatch('getSearchInfo',this.searchParams)  //dispatch只能传递一个参数  传递多个用对象
+       },
+       handlerSeaechParams(){
+          let {category1Id,category2Id,category3Id,categoryName}=this.$route.query
+          let {keyword}=this.$route.params
+          let searchParams={
           ...this.searchParams,
           category1Id,
           category2Id,
@@ -147,17 +156,42 @@ import { mapGetters} from 'vuex'
           keyword
         }
         this.searchParams=searchParams
-    },
-    mounted(){
-        this.getSearchInfo()
-    },
-    methods:{
-      getSearchInfo(){
-        this.$store.dispatch('getSearchInfo',this.searchParams)  //dispatch只能传递一个参数  传递多个用对象
+       },
+       removecategoryName(){
+         this.searchParams.categoryName=undefined
+         this.searchParams.category1Id=undefined
+         this.searchParams.category2Id=undefined
+         this.searchParams.category3Id=undefined
+        //  this.getSearchInfo()
+        this.$router.push({name:'search',params:this.$route.params})  //路径发生变化  被watch检测到 然后发送请求
+       },
+       removeKeyword(){
+          this.searchParams.keyword=undefined
+          this.$bus.$emit('clearKeyword')   //通知head组件清空
+        //  this.getSearchInfo()
+        this.$router.push({name:'search',query:this.$route.query})
+
        }
     },
     computed:{
       ...mapGetters(['goodsList'])
+    },
+    watch:{
+      $route(newVal,oldVal){
+        //  let {category1Id,category2Id,category3Id,categoryName}=this.$route.query
+        // let {keyword}=this.$route.params
+        // let searchParams={
+        //   ...this.searchParams,
+        //   category1Id,
+        //   category2Id,
+        //   category3Id,
+        //   categoryName,
+        //   keyword
+        // }
+        // this.searchParams=searchParams
+        this.handlerSeaechParams()
+        this.getSearchInfo()
+      }
     }
   }
 </script>

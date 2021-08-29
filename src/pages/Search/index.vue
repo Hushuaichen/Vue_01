@@ -13,35 +13,28 @@
           <ul class="fl sui-tag">
             <li class="with-x" v-if="searchParams.categoryName">{{searchParams.categoryName}}<i @click="removecategoryName">×</i></li>
             <li class="with-x" v-if="searchParams.keyword">{{searchParams.keyword}}<i @click="removeKeyword">×</i></li>
+            <li class="with-x" v-if="searchParams.trademark">{{searchParams.trademark.split(':')[1]}}<i @click="removeTrademark">×</i></li>
+            <li class="with-x" v-for="(prop,index) in searchParams.props" :key="prop">{{prop.split(':')[1]}}<i @click="removeProp(index)">×</i></li>
 
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
-
+        <SearchSelector  @searchForTrademark="searchForTrademark" @searchForProps="searchForProps"/>
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:sortFlag==='1'}">
+                  <a href="javascript:;" @click="changeSort('1')">综合<i v-if="sortFlag==='1'" class="iconfont" 
+                  :class="{icondown:sortType==='desc',
+                  iconup:sortType==='asc'}"></i></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:sortFlag==='2'}">
+                  <a href="javascript:;" @click="changeSort('2')">价格<i v-if="sortFlag==='2'" class="iconfont" 
+                   :class="{icondown:sortType==='desc',
+                  iconup:sortType==='asc'}"></i></a>
                 </li>
               </ul>
             </div>
@@ -51,7 +44,8 @@
               <li class="yui3-u-1-5" v-for="(goods,index) in goodsList" :key="goods.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"><img :src="goods.defaultImg" /></a>
+                    <router-link  :to="'/detail/'+goods.id"><img :src="goods.defaultImg" /></router-link>
+                    <!-- <a href="item.html" target="_blank"><img :src="goods.defaultImg" /></a> -->
                   </div>
                   <div class="price">
                     <strong>
@@ -60,7 +54,8 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{goods.title}}</a>
+                    <router-link  :to="'/detail/'+goods.id">{{goods.title}}</router-link>
+                    <!-- <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{goods.title}}</a> -->
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
@@ -73,35 +68,12 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+           <Pagination 
+           :currentPageNO="searchParams.pageNo" 
+           :total="searchInfo.total"
+           :pageSize="searchParams.pageSize"
+           :continueNo="5"
+           @changePageNo="changePageNo"></Pagination>
         </div>
       </div>
     </div>
@@ -109,7 +81,7 @@
 </template>
 
 <script>
-import { mapGetters} from 'vuex'
+import { mapGetters, mapState} from 'vuex'
   import SearchSelector from './SearchSelector/SearchSelector'
   export default {
     name: 'Search',
@@ -127,9 +99,9 @@ import { mapGetters} from 'vuex'
             props: [],
             trademark: "",
               //默认搜索条件
-            order: "1:desc",  //排序规则
+            order: "2:desc",  //排序规则
             pageNo: 1,    //搜索第几页的商品
-            pageSize: 10,   //每页多少个商品
+            pageSize: 2,   //每页多少个商品
         }
       }
     },
@@ -155,6 +127,20 @@ import { mapGetters} from 'vuex'
           categoryName,
           keyword
         }
+        //赋值之前 最好是吧属性值是空串的属性干掉
+        //  for  for in   forEach  for  of
+        //for 针对数组遍历   效率不高  可以使用break continue
+        //for in   用来遍历对象 遍历对象的可枚举属性  效率最低（不但遍历自身还要遍历原型）
+        //forEach数组的一个方法 遍历数组  效率最高  不可以使用break continue
+        //for of  es6新加的遍历方法  必须是可迭代对象 效率一般 没foreach高  也可以使用break continue  
+
+        //遍历对象最快的也是foreach 把对象转化为数组
+        // Object.keys(searchParams)   //把对象转化为数组，数组中是对象的属性  看到这个方法就是为了使用forEach方法高效遍历
+        Object.keys(searchParams).forEach(key=>{
+          if(searchParams[key]===""){
+            delete searchParams[key]
+          }
+        })
         this.searchParams=searchParams
        },
        removecategoryName(){
@@ -162,19 +148,86 @@ import { mapGetters} from 'vuex'
          this.searchParams.category1Id=undefined
          this.searchParams.category2Id=undefined
          this.searchParams.category3Id=undefined
+         this.searchParams.pageNo=1
         //  this.getSearchInfo()
-        this.$router.push({name:'search',params:this.$route.params})  //路径发生变化  被watch检测到 然后发送请求
+        this.$router.replace({name:'search',params:this.$route.params})  //路径发生变化  被watch检测到 然后发送请求
        },
        removeKeyword(){
           this.searchParams.keyword=undefined
           this.$bus.$emit('clearKeyword')   //通知head组件清空
         //  this.getSearchInfo()
-        this.$router.push({name:'search',query:this.$route.query})
+         this.searchParams.pageNo=1
+        this.$router.replace({name:'search',query:this.$route.query})
 
-       }
+       },
+       searchForTrademark(trademark){//用户点击品牌后  根据品牌发送请求
+          this.searchParams.trademark=`${trademark.tmId}:${trademark.tmName}`  //参数的样子参考文档
+         this.searchParams.pageNo=1
+         this.getSearchInfo()
+      },
+      removeTrademark(){  //删除品牌标签后 重新发送请求
+        this.searchParams.trademark=undefined
+         this.searchParams.pageNo=1
+          this.getSearchInfo()
+      },
+
+      //some every  函数  
+      //some 功能  如果数组中有一个和条件一样 就返回true  没有就是false  参数 回调函数
+      //every 与some 相反 数组中全和条件一样就是true  有一个不一样就是false
+      searchForProps(attrValue,attr){
+        let prop = `${attr.attrId}:${attrValue}:${attr.attrName}`
+        let isRepeate =this.searchParams.props.some(item=>item===prop)
+        if(isRepeate){
+          return
+        }
+        this.searchParams.props.push(prop)
+         this.searchParams.pageNo=1
+        this.getSearchInfo()
+
+      },
+      removeProp(index){
+        this.searchParams.props.splice(index,1)
+         this.searchParams.pageNo=1
+          this.getSearchInfo()
+      },
+      changeSort(sortFlag){
+        //获取原来的排序标志和排序类型
+        // let originSortFlag=this.searchParams.order.split(':')[0]
+        // let originSortType=this.searchParams.order.split(':')[1]
+        let originSortFlag=this.sortFlag
+        let originSortType=this.sortType
+        let newOrder=''
+        //判断用户点击的是不是还是原来的
+        if(sortFlag===originSortFlag){
+          //点击的和原来一样  排序类型改变 标志不变
+          newOrder=`${originSortFlag}:${originSortType==='asc'?'desc':'asc'}`
+        }else{
+          //点击的不一样  把排序标志改变 排序类型默认
+          newOrder=`${sortFlag}:desc`
+        }
+          this.searchParams.order=newOrder
+         this.searchParams.pageNo=1
+          this.getSearchInfo()
+
+      },
+      //分液器点击切换页码的回调
+      changePageNo(page){
+        this.searchParams.pageNo=page
+          this.getSearchInfo()
+      }
     },
     computed:{
-      ...mapGetters(['goodsList'])
+      ...mapGetters(['goodsList']),
+      ...mapState({
+        searchInfo:state=>state.search.searchInfo
+      }),
+      //优化
+      sortFlag(){
+        return this.searchParams.order.split(':')[0]
+      },
+      sortType(){
+        return this.searchParams.order.split(':')[1]
+      }
     },
     watch:{
       $route(newVal,oldVal){

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        function obj(name){
+            this.name=name
+        }
+        obj.prototype.HaHa=function(){
+            console.log('---heihei---');
+        }
+        let obj1=new obj('haha')
+        console.log(obj)
+        console.log(obj1)
+
+
+
+        //手写bind方法
+        function bind(fn,obj,...args){
+            if(obj===null || obj===undefined){
+                obj=obj || window
+            }
+            return function(...args)
+        }
+        //手写call方法
+        Function.prototype.call=function(obj,...args){
+            if(obj===null || obj===undefined){
+                obj=window
+            }
+            obj.callMethod=this
+            obj.callMethod(...args)
+        }
+
+        Function.prototype.call = function(obj,...args){
+            if(obj===null || obj===undefined){
+                obj=window
+            }
+            obj.callMethod = this
+            obj.callMethod(...args)
+        }
+        //手写apply方法
+        Function.prototype.apply=function(obj,args){
+            if(obj===null || obj===undefined){
+                obj=window
+            }
+            obj.applyMethod=this
+            obj.applyMethod(...args)
+        }
+        //手写数组的foeEach方法
+        Array.prototype.forEach=function(a){
+            for(let i=0;i<this.length;i++){
+                a(this[i],i)
+            }
+        }
+        //函数的防抖和节流
+        //节流
+        function throttle(callback,delay){
+            let start = 0
+            return function(event){
+                const current = Date.now()
+                if(current-start > delay){
+                    callback.call(this,event)
+                    start = current
+                }
+            }
+        }
+        //防抖
+        function debounds(callback,delay){
+            return function(event){
+                if(callback.timeId){
+                    clearTimeout(callback.timeId)
+                }
+                callback.timeId = setTimeout(()=>{
+                    callback.call(this,event)
+                    delete callback.timeId
+                },delay)
+            }
+        }
+
+        function debounds(callback,delay){
+            return function(event){
+                if(callback.timeId){
+                    clearTimeout(callback.timeId)
+                }
+                callback.timeId = setTimeout(()=>{
+                    callback.call(this,event)
+                    delete callback.timeId
+                },delay)
+            }
+        }
+
+        function throttle(callback,delay){
+            let start = 0
+            return function(event){
+                const current = Date.now()
+                if(current-start > delay){
+                    callback.call(this,event)
+                }
+                start = current
+            }
+        }
+
+
+        //数组去重
+        //1
+        function unique(array){
+            var arr = []
+            array.forEach((item)=>{
+                if(arr.indexOf(item)!==1){
+                    arr.push(item)
+                }
+            })
+            return arr
+        }
+
+        //2
+        function unique(array){
+            const arr = []
+            const obj = {}
+            arr.forEach(item=>{
+                if(!obj.hasOwnProperty(item)){
+                    obj[ietm] = true
+                    arr.push(item)
+                }
+            })
+            return arr
+        }
+
+        //3
+        function unique(array){
+            // return Array.from(new Set(array))
+            return [...new Set(array)]
+        }
+
+
+        //递归实现深拷贝
+            function getType(data){
+               return Object.prototype.toString.call(data).slice(8,-1)
+            }
+            function deepClone(data){
+                let container;
+                let type = getType(data)
+                if(type==='Object'){
+                    container={}
+                }
+                if(type==='Array'){
+                    container=[]
+                }
+                for(let i in data){
+                    let type = getType(data[i])
+                    if(type==='Array' ||type==='Object'){
+                        container[i]=deepClone(data[i])
+                    }else{
+                        container[i]=data[i]
+                    }
+                }
+                return container
+            }
+
+
+            function getType(data){
+                return Object.prototype.toString.call(data).slice(8,-1)
+            }
+            function deepClone(data){
+                let container;
+                let type = getType(data)
+                if(type==='Object'){
+                    container={}
+                }
+                if(type==='Array'){
+                    container=[]
+                }
+                for(let i in data){
+                    let type = getType(data[i])
+                    if(type==='Object' || type==='Array'){
+                        containerp[i]=getType(data[i])
+                    }else{
+                        container[i]=data[i]
+                    }
+                }
+                return container
+            }
+
+
+            //斐波那契数列
+            function fib(num){
+                if(num<3){
+                    return 1
+                }
+                return fib(num-1)+fib(num-2)
+            }
+    </script>
+</body>
+</html>

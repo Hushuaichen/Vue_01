@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // let arr = [1,2,3]
+        // let obj = {name:'hhh'}
+        // let a = arr.toString()
+        // let b = obj.toString()
+        // console.log(a);
+        // console.log(b);
+        function fib(num){
+                if(num<3){
+                    return 1
+                }
+                return fib(num-1)+fib(num-2)
+            }
+
+            console.log(fib(7));
+
+
+
+
+            //斐波那契
+            function fib(num){
+                if(num<3){
+                    return 1
+                }
+                return fib(num-1)+fib(num+1)
+            }
+
+            function unique(arr){
+                return [...new Set(arr)]
+            }
+
+
+            function unique(arr){
+                return [...new Set(arr)]
+            }
+
+            
+
+            function unique(array){
+                const arr = []
+                array.forEach(item => {
+                    if(arr.indexOf(item)===-1){
+                        arr.push(item)
+                    }
+                })
+                return arr
+            }
+
+            function unique(array){
+                const arr = []
+                const obj = {}
+                array.forEach(item=>{
+                    if(!obj.hasOwnProperty(item)){
+                        obj[item] = true
+                        arr.push(item)
+                    }
+                })
+                return arr
+            }
+
+
+            function unique(array){
+                const arr = []
+                const obj = {}
+                array.forEach(item=>{
+                    if(!obj.hasOwnProperty(item)){
+                        obj[item]=true
+                        arr.push(item)
+                    }
+                })
+                return arr
+            }
+
+            function unique(array){
+                return [...new Set(array)]
+            }
+
+           function bind(fn,obj,...args){
+               if(obj===null || obj===undefined){
+                   obj=obj||window
+               }
+               return function(...args2){
+                   return call(fn,obj,...args,...args2)
+               }
+           }
+
+
+           //数组扁平化的实现
+           function flatten(array){
+               let arr = [].concat(...array)
+               while(arr.some(item=>Array.isArray(item))){
+                   arr=[].concat(...arr)
+               }
+               return arr
+           }
+
+
+           function flatten(array){
+               let arr = [].concat(...array)
+               while(arr.some(item=>Array.isArray(item))){
+                   arr=[].concat(...arr)
+               }
+               return arr
+           }
+
+    </script>
+</body>
+</html>

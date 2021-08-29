@@ -6,7 +6,14 @@
                 <div class="container">
                     <div class="loginList">
                         <p>HuShop欢迎您！</p>
-                        <p>
+                        <p v-if="$store.state.user.userInfo.name">
+                            <span>欢迎您:&nbsp;&nbsp;</span>
+                        
+                            <a href="javascript:;">{{$store.state.user.userInfo.name}}</a>
+                             <!-- <router-link to="/register" class="register">免费注册</router-link> -->
+                            <a href="javascript:;" class="register" @click="logout">退出登录</a>
+                        </p>
+                        <p v-else>
                             <span>请</span>
                             <router-link to="/login">登录</router-link>
                             <!-- <a href="###">登录</a> -->
@@ -15,8 +22,10 @@
                         </p>
                     </div>
                     <div class="typeList">
-                        <a href="###">我的订单</a>
-                        <a href="###">我的购物车</a>
+                        <!-- <a href="###">我的订单</a> -->
+                        <router-link to="/center">我的订单</router-link>
+                        <!-- <a href="###">我的购物车</a> -->
+                        <router-link to="/shopcart">我的购物车</router-link>
                         <a href="###">我的HuShop</a>
                         <a href="###">HuShop会员</a>
                         <a href="###">企业采购</a>
@@ -65,10 +74,23 @@ export default {
             if(this.$route.query){
                 location.query=this.$route.query
             }
-          this.$router.push(location)
+             if(this.$route.path!=='/home'){
+                 this.$router.replace(location)
+                 }else{
+                 this.$router.push(location)
+                 }
     },
     clearKeyword(){
         this.keyword=''
+    },
+    async logout(){
+        try {
+        await this.$store.dispatch('userLogout')
+        this.$router.push('/')
+        } catch (error) {
+           alert("退出失败") 
+        }
+
     }
 },
     mounted(){

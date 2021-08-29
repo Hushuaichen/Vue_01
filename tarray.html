@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //冒泡排序
+        let arr = [2,8,3,6,0,2,4,6,1,2]
+        var temp
+        function bubble(arr){
+            for(let i=0;i<arr.length-1;i++){
+                for(let v=0;v<arr.length-i-1;v++){
+                    if(arr[v]>arr[v+1]){
+                        temp=arr[v]
+                        arr[v]=arr[v+1]
+                        arr[v+1]=temp
+                    }
+                }
+            }
+            return arr
+        }
+        console.log(bubble(arr));
+
+        //自定义instanceof工具函数
+        function myInstanceOf(obj,type){
+            let protoObj = obj.__proto__
+            while(protoObj){
+                if(protoObj===type.prototype){
+                    return true
+                }
+                protoObj = protoObj.__proto__
+            }
+            return false
+        }
+
+        function instannceOf(obj,type){
+            let protoObj = obj.__prototype__
+            while(protoObj){
+                if(protoObj===type.prototype){
+                    return true
+                }
+                protoObj=protoObj.__proto__
+            }
+            return false
+        }
+
+        //call方法
+        Function.prototype.call=function(obj,...args){
+            if(obj===nulk || objk===undefined){
+                obj=window
+            }
+            obj.methoda=this
+            obj.methoda(...args)
+        }
+        //apply方法
+        Function.prototype.apply = function(obj,args){
+            if(obj===null||obj===undefined){
+                onj=window
+            }
+            obj.methoda=this
+            obj.methoda(...args)
+        }
+
+        //函数的节流
+        function throttole(callback,delay){
+            let start = 0
+            return function(event){
+                const current = Date.now()
+                if(current-start>delay){
+                    callback.call(this,event)
+                    start = current
+                }
+            }
+        }
+
+        //封装ajax请求
+        function sendAjax(url){
+            return new Promise((resolve,reject)=>{
+                const xhr = new XMLHttpRequest()
+                xhr.onreadystatechange = function(){
+                    if(xhr.readyState===4){
+                        if(xhr.status>=200&&xhr.status<300){
+                            resolve(xhr.response)
+                        }else{
+                            reject()
+                        }
+                    }
+                }
+                xhr.open('get','')
+                xhr.send()
+            })
+        }
+
+        //axios
+        import axios from 'axios'
+        const request = axios.create({
+            baseURL:'',
+            timeout:2000
+        })
+
+        import request from ''
+        const reqPay = ()=>{
+            return request({
+                url:'',
+                methods:'',
+                data:{},
+                params:''
+            })
+        }
+
+        //对象的创建
+        var obj = {}
+
+
+        function createObj(name,age){
+            var obj = new Object()
+            obj.name=name
+            obj.age=age
+            return obj
+        }
+
+        function createObj(name,age){
+            this.name=name
+            this.age=age
+        }
+        var per = new createObj(11,11)
+    
+
+        class Student{
+            constructor(name,age){
+                this.name=name
+                this.age=age
+            }
+            sayHi(){
+                console.log('/');
+            }
+            eat=()=>{
+                console.log('/');
+            }
+        }
+
+        function instanceofA(obj,tyoe){
+            let protoObj = obj.__proto__
+            while(protoObj){
+            if(protoObj===type.prototype){
+                return true
+            }
+            protoObj=protoObj.__proto__
+        }
+            return false
+        }
+
+
+
+
+
+        //快速排序
+        let nums = [5,6,4,3,56,7,8,1]
+        function quickSort(arr){
+            if(arr.length<2){
+                return arr
+            }
+            let basis = arr[0]
+            let left = []
+            let right = []
+            for(let i=0;i<arr.length;i++){
+                if(arr[i]<basis){
+                    left.push(arr[i])
+                }else{
+                    right.push(arr[i])
+                }
+            }
+            return quickSort(left).concat(basis,quickSort(right))
+        }
+        console.log(quickSort(nums));
+
+
+
+
+
+
+        function quickSort(arr){
+            if(arr.length<2){
+                return arr
+            }
+            let basis = arr[0]
+            let left = []
+            let right = []
+            for(let i=0;i<arr.length;i++){
+                if(arr[i]<basis){
+                    left.push(arr[i])
+                }else{
+                    right.push(arr[i])
+                }
+            }
+            return quickSort(left).concat(basis,quickSort(right))
+        }
+        console.log(quickSort(nums));
+
+
+
+        //冒泡排序
+        function bubbling(arr){
+            let temp
+            for(let i=0;i<arr.length;i++){
+                for(let v=0;v<arr.length-i-1;v++){
+                    if(arr[v]<arr[v+1]){
+                        temp=arr[v]
+                        arr[v]=arr[v+1]
+                        arr[v+1]=temp
+                    }
+                }
+            }
+            return arr
+        }
+        bubbling(nums)
+
+
+
+        function myInstanceOf(obj,type){
+            let protoObj = obj.__proto__
+            while(protoObj){
+                if(protoObj===type.peototype){
+                    return true
+                }
+                protoObj = protoObj.__proto__
+            }
+            return false
+        }
+
+
+
+        function getType(data){
+            return Object.prototype.toString.call(data).slice(8,-1)
+        }
+        function deepClone(data){
+            let container
+            let type = getType(data)
+            if(type==='Object'){
+                container = {}
+            }
+            if(type==='Array'){
+                container = []
+            }
+            for(let i in data){
+                let type = getType(data[i])
+                if(type==='Object' || type==='array'){
+                    container[i] = deepClone(data[i])
+                }else{
+                    container[i]=data[i]
+                }
+            }
+            return container
+        }
+    </script>
+</body>
+</html>
